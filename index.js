@@ -21,9 +21,16 @@ async function run() {
 
         const database = client.db('car_shop');
         const productsCollection = database.collection('products');
+        const reviewsCollection = database.collection('reviews');
 
         app.get('/products', async(req, res) => {
             const cursor = productsCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        });
+
+        app.get('/reviews', async(req, res) => {
+            const cursor = reviewsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
