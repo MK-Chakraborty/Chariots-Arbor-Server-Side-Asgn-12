@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -15,7 +16,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 async function run() {
-    try{
+    try {
         await client.connect();
         console.log('db connected');
 
@@ -23,13 +24,20 @@ async function run() {
         const productsCollection = database.collection('products');
         const reviewsCollection = database.collection('reviews');
 
-        app.get('/products', async(req, res) => {
+        app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         });
 
-        app.get('/reviews', async(req, res) => {
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await productsCollection.findOne(query);
+            res.json(product);
+        })
+
+        app.get('/reviews', async (req, res) => {
             const cursor = reviewsCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
@@ -47,5 +55,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log('listening to port: ',port);
+    console.log('listening to port: ', port);
 })
