@@ -44,16 +44,37 @@ async function run() {
             res.json(result);
         });
 
-        app.get('/order', async(req, res) => {
+        app.post('/reviews', async (req, res) => {
+            const revewMsg = req.body;
+            const result = await reviewsCollection.insertOne(revewMsg);
+            res.json(result);
+        })
+
+        app.get('/order', async (req, res) => {
             const cursor = ordersCollection.find({});
             const result = await cursor.toArray();
             res.json(result);
         })
 
-        app.post('/order', async(req, res) => {
+        app.get('/myOrder', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = ordersCollection.find(query);
+            const orders = await cursor.toArray();
+            res.json(orders);
+        })
+
+        app.post('/order', async (req, res) => {
             const orderInfo = req.body;
             console.log(orderInfo);
             const result = await ordersCollection.insertOne(orderInfo);
+            res.json(result);
+        })
+
+        app.delete('/order/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await ordersCollection.deleteOne(query);
             res.json(result);
         })
     }
