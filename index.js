@@ -23,6 +23,7 @@ async function run() {
         const database = client.db('car_shop');
         const productsCollection = database.collection('products');
         const reviewsCollection = database.collection('reviews');
+        const ordersCollection = database.collection('orders');
 
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find({});
@@ -42,6 +43,19 @@ async function run() {
             const result = await cursor.toArray();
             res.json(result);
         });
+
+        app.get('/order', async(req, res) => {
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            res.json(result);
+        })
+
+        app.post('/order', async(req, res) => {
+            const orderInfo = req.body;
+            console.log(orderInfo);
+            const result = await ordersCollection.insertOne(orderInfo);
+            res.json(result);
+        })
     }
     finally {
         // await client.close();
