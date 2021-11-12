@@ -39,6 +39,12 @@ async function run() {
             res.json(product);
         });
 
+        app.post('/products', async(req, res) => {
+            const productInfo = req.body;
+            const result = await productsCollection.insertOne(productInfo);
+            res.json(result);
+        })
+
         app.get('/reviews', async (req, res) => {
             const cursor = reviewsCollection.find({});
             const result = await cursor.toArray();
